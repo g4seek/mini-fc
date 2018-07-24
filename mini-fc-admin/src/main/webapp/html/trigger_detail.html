@@ -1,0 +1,37 @@
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<h3>触发器详情</h3>
+<h5>触发器ID:<span id="triggerId"></span></h5>
+<h5>服务名称:<span id="serviceName"></span></h5>
+<h5>函数名称:<span id="functionName"></span></h5>
+<h5>触发器名称:<span id="triggerName"></span></h5>
+<h5>触发器类型:<span id="triggerType"></span></h5>
+<h5>触发器配置:<span id="triggerConfig"></span></h5>
+<hr/>
+<button id="returnBtn" class="btn btn-default">返回</button>
+<script>
+    $(function () {
+
+        $.ajax({
+            type: "GET",
+            url: parent.window.triggerDetailUrl,
+            data: {"id": parent.window.triggerId},
+            success: function (result) {
+                var triggerInfo = result.data.triggerInfo;
+                $('#triggerId').text(triggerInfo.id);
+                $('#serviceName').text(triggerInfo.serviceName);
+                $('#functionName').text(triggerInfo.functionName);
+                $('#triggerName').text(triggerInfo.triggerName);
+                $('#triggerType').text(triggerInfo.triggerType);
+                $('#triggerConfig').text(triggerInfo.triggerConfig);
+            }
+        });
+        $("#returnBtn").click(function () {
+            $("#consolePanel", window.parent.document).attr("src", "/html/function_detail.html");
+        });
+    });
+
+</script>

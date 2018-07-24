@@ -1,0 +1,43 @@
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<h3>创建服务</h3>
+<form id="serviceForm" action="">
+    <div class="form-group">
+        <label>服务名称</label>
+        <input type="text" class="form-control" name="serviceName" required/>
+    </div>
+    <div class="form-group">
+        <label>服务描述</label>
+        <textarea type="text" class="form-control" name="description" rows="5"></textarea>
+    </div>
+    <button type="submit" id="submitBtn" class="btn btn-primary">提交</button>
+    <button type="button" id="returnBtn" class="btn btn-default">返回</button>
+    <button type="reset" class="btn btn-danger">重置</button>
+</form>
+<script>
+    $(function () {
+        $("#serviceForm").submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: parent.window.serviceCreateUrl,
+                data: $("#serviceForm").serialize(),
+                dataType: "json",
+                contentType: "application/x-www-form-urlencoded;charset=utf-8",
+                success: function (result) {
+                    if (result.code.toString() === "200") {
+                        $("#consolePanel", window.parent.document).attr("src", "/html/service_list.html");
+                    } else {
+                        alert(result.errorMsg);
+                    }
+                }
+            });
+        });
+        $("#returnBtn").click(function () {
+            $("#consolePanel", window.parent.document).attr("src", "/html/service_list.html");
+        });
+    });
+</script>

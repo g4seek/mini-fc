@@ -1,0 +1,62 @@
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<h3>创建触发器</h3>
+<form id="triggerForm" action="">
+    <input type="hidden" id="serviceName" name="serviceName"/>
+    <input type="hidden" id="functionName" name="functionName"/>
+    <div class="form-group">
+        <label>触发器名称</label>
+        <input type="text" class="form-control" name="triggerName" required/>
+    </div>
+    <div class="form-group">
+        <label>触发器类型</label>
+        <select class="form-control" name="triggerType">
+            <option>HTTP</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>触发器配置</label>
+        <input type="text" class="form-control" name="triggerConfig" required/>
+    </div>
+
+    <button type="submit" id="submitBtn" class="btn btn-primary">提交</button>
+    <button type="button" id="returnBtn" class="btn btn-default">返回</button>
+    <button type="reset" class="btn btn-danger">重置</button>
+</form>
+<script>
+    $(function () {
+        $.ajax({
+            type: "GET",
+            url: parent.window.functionDetailUrl,
+            data: {"id": parent.window.functionId},
+            success: function (result) {
+                var functionInfo = result.data.functionInfo;
+                $('#serviceName').val(functionInfo.serviceName);
+                $('#functionName').val(functionInfo.functionName);
+            }
+        });
+        $("#triggerForm").submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: parent.window.triggerCreateUrl,
+                data: $("#triggerForm").serialize(),
+                dataType: "json",
+                contentType: "application/x-www-form-urlencoded;charset=utf-8",
+                success: function (result) {
+                    if (result.code.toString() === "200") {
+                        $("#consolePanel", window.parent.document).attr("src", "/html/function_detail.html");
+                    } else {
+                        alert(result.errorMsg);
+                    }
+                }
+            });
+        });
+        $("#returnBtn").click(function () {
+            $("#consolePanel", window.parent.document).attr("src", "/html/function_detail.html");
+        });
+    });
+</script>

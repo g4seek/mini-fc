@@ -1,0 +1,10 @@
+/target
+*.class
+target
+.classpath
+.project
+.settings
+build
+.DS_Store
+*.iml
+src/main/webapp/WEB-INF/classes/

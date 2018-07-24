@@ -1,0 +1,71 @@
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+<link rel="stylesheet" href="/css/prism.css">
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="/js/prism.js"></script>
+<h3>创建函数</h3>
+<form id="functionForm" action="">
+    <input type="hidden" id="serviceName" name="serviceName"/>
+    <div class="form-group">
+        <label>函数名称</label>
+        <input type="text" class="form-control" name="functionName" required/>
+    </div>
+    <div class="form-group">
+        <label>函数描述</label>
+        <textarea type="text" class="form-control" name="description" rows="5"></textarea>
+    </div>
+    <div class="form-group">
+        <label>运行环境</label>
+        <select class="form-control" name="execEnviroment">
+            <option>Python2.7</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>函数入口</label>
+        <input type="text" class="form-control" name="functionEntrance" placeholder="index.handler" required/>
+    </div>
+    <div class="form-group">
+        <label>函数源代码</label>
+        <textarea class="form-control" name="sourceCode" rows="20" placeholder=""></textarea>
+    </div>
+    <button type="submit" id="submitBtn" class="btn btn-primary">提交</button>
+    <button type="button" id="returnBtn" class="btn btn-default">返回</button>
+    <button type="reset" class="btn btn-danger">重置</button>
+</form>
+<script>
+    $(function () {
+        $.ajax({
+            type: "GET",
+            url: parent.window.serviceDetailUrl,
+            data: {"id": parent.window.serviceId},
+            success: function (result) {
+                var serviceInfo = result.data.serviceInfo;
+                $('#serviceName').val(serviceInfo.serviceName);
+            }
+        });
+        $("#functionForm").submit(function (e) {
+            $('button').attr("disabled",true);
+            e.preventDefault();
+            $.ajax({
+                type: "POST",
+                url: parent.window.functionCreateUrl,
+                data: $("#functionForm").serialize(),
+                dataType: "json",
+                contentType: "application/x-www-form-urlencoded;charset=utf-8",
+                success: function (result) {
+                    if (result.code.toString() === "200") {
+                        $("#consolePanel", window.parent.document).attr("src", "/html/service_detail.html");
+                    } else {
+                        alert(result.errorMsg);
+                        $('button').attr("disabled",false);
+                    }
+                }
+            });
+        });
+        $("#returnBtn").click(function () {
+            $("#consolePanel", window.parent.document).attr("src", "/html/service_detail.html");
+        });
+    });
+</script>
