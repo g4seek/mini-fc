@@ -8,25 +8,31 @@ from logger_util import logger
 # 运行服务并暴露端口
 def run_service(function_info):
     image_name = get_image_name(function_info)
+    image_name_with_version = get_image_name_with_version(function_info)
     k8s_service_name = get_k8s_service_name(function_info)
-    cmd = "kubectl run {0} --image={1}/{2} --port={3}".format(k8s_service_name, configs.docker_registry, image_name,
-                                                              8000)
+    # TODO 查询状态决定是否执行命令
+    cmd = 'kubectl run {0} --image={1}/{2} --port={3} --env="TZ=Asia/Shanghai" --namespace={4}'.format(
+        k8s_service_name, configs.docker_registry, image_name_with_version, 8000, configs.k8s_namespace)
     execute_print_cmd(cmd)
-    # TODO 部署有问题,无法暴露接口到宿主机
-    # cmd = 'kubectl expose deployment/{0} --type="NodePort" --port {1}'.format(k8s_service_name, 8000)
-    # execute_print_cmd(cmd)
-
-    proxy_url = 'http://{0}:{1}/k8sFunctionProxy?path=/&service={2}'.format(
-        configs.mini_fc_host, configs.mini_fc_ops_port, k8s_service_name)
+    cmd = 'kubectl expose deploy {0} --type=NodePort --namespace={1}'.format(k8s_service_name,
+                                                                             configs.k8s_namespace)
+    execute_print_cmd(cmd)
+    cmd = 'kubectl set image deploy/{0} {1}={2}/{3} --namespace={4}'.format(k8s_service_name, k8s_service_name,
+                                                                            configs.docker_registry,
+                                                                            image_name_with_version,
+                                                                            configs.k8s_namespace)
+    execute_print_cmd(cmd)
+    proxy_url = 'http://{0}:{1}/k8sProxy/{2}/{3}'.format(
+        configs.mini_fc_host, configs.mini_fc_ops_port, k8s_service_name, '')
     return proxy_url
 
 
 # 删除服务
-def remove_image(function_info):
+def delete_service(function_info):
     k8s_service_name = get_k8s_service_name(function_info)
-    cmd = "kubectl delete svc " + k8s_service_name
+    cmd = 'kubectl delete svc {0} --namespace={1}'.format(k8s_service_name, configs.k8s_namespace)
     execute_print_cmd(cmd)
-    cmd = "kubectl delete deploy " + k8s_service_name
+    cmd = 'kubectl delete deploy {0} --namespace={1}'.format(k8s_service_name, configs.k8s_namespace)
     execute_print_cmd(cmd)
     return "ok"
 
@@ -34,14 +40,57 @@ def remove_image(function_info):
 # 获取运行日志
 def get_pod_log(function_info):
     k8s_service_name = get_k8s_service_name(function_info)
-    pod_name = get_pod_name(k8s_service_name)
-    cmd = "kubectl log " + pod_name
-    logger.info(cmd)
-    lines = os.popen(cmd, "r").readlines()
+    pod_names = get_pod_names(k8s_service_name)
     result = ""
-    for line in lines:
-        result += line
+    for pod_name in pod_names:
+        pod_name = pod_name.replace("\n", "")
+        cmd = 'kubectl logs {0} --namespace={1}'.format(pod_name, configs.k8s_namespace)
+        logger.info(cmd)
+        lines = os.popen(cmd, "r").readlines()
+        result += "=" * 10 + pod_name.replace("\n", "") + "=" * 10 + "\n"
+        for line in lines:
+            result += line
+        result += "\n"
     return result
+
+
+# 获取k8s运行状况
+def get_k8s_overview(type):
+    result_list = []
+    if type == "pod":
+        cmd = 'kubectl get po -o wide --namespace={0}'.format(configs.k8s_namespace)
+        lines = os.popen(cmd, "r").readlines()
+        for i in range(1, len(lines)):
+            result = ' '.join(lines[i].split()).split(' ')
+            result_list.append(
+                {"name": result[0], "ready": result[1], "status": result[2], "restarts": result[3], "age": result[4],
+                 "ip": result[5], "node": result[6]})
+    elif type == "service":
+        cmd = 'kubectl get svc -o wide --namespace={0}'.format(configs.k8s_namespace)
+        lines = os.popen(cmd, "r").readlines()
+        for i in range(1, len(lines)):
+            result = ' '.join(lines[i].split()).split(' ')
+            result_list.append(
+                {"name": result[0], "type": result[1], "clusterIp": result[2], "externalIp": result[3],
+                 "ports": result[4], "age": result[5], "selector": result[6]})
+    elif type == "deployment":
+        cmd = 'kubectl get deploy -o wide --namespace={0}'.format(configs.k8s_namespace)
+        lines = os.popen(cmd, "r").readlines()
+        for i in range(1, len(lines)):
+            result = ' '.join(lines[i].split()).split(' ')
+            result_list.append(
+                {"name": result[0], "desired": result[1], "current": result[2], "upToDate": result[3],
+                 "available": result[4], "age": result[5], "containers": result[6], "images": result[7],
+                 "selector": result[8]})
+    return result_list
+
+
+# 对部署进行扩容或缩容
+def scale_deployment(target_num, deployment_name):
+    cmd = 'kubectl scale deploy {0} --replicas={1} --namespace={2}'.format(deployment_name, target_num,
+                                                                           configs.k8s_namespace)
+    execute_print_cmd(cmd)
+    return "ok"
 
 
 # 获取镜像名称
@@ -49,16 +98,23 @@ def get_image_name(function_info):
     return "minifc_{0}_{1}".format(function_info.service_name, function_info.function_name)
 
 
+# 获取带版本的镜像名称
+def get_image_name_with_version(function_info):
+    return "minifc_{0}_{1}:v{2}".format(function_info.service_name, function_info.function_name,
+                                        function_info.function_version)
+
+
 # 获取k8s服务名称
 def get_k8s_service_name(function_info):
-    return "minifc-{0}-{1}".format(function_info.service_name, function_info.function_name)
+    return "{0}-{1}".format(function_info.service_name, function_info.function_name)
 
 
 # 获取容器组名称
-def get_pod_name(k8s_service_name):
-    cmd = "kubectl get pods -o=custom-columns=NAME:.metadata.name | grep '{0}-'".format(k8s_service_name)
+def get_pod_names(k8s_service_name):
+    cmd = 'kubectl get po -o=custom-columns=NAME:.metadata.name --namespace={0} | grep {1}-'.format(
+        configs.k8s_namespace, k8s_service_name)
     logger.info(cmd)
-    return os.popen(cmd, "r").readline()
+    return os.popen(cmd, "r").readlines()
 
 
 def execute_print_cmd(cmd):

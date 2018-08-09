@@ -2,45 +2,11 @@
 <head>
     <title>minifc控制台</title>
     <link rel="icon" href="data:;base64,=">
-    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
-<div class="container">
-    <div class="row">
-        <div class="col-md-12" style="padding: 20px">
-            <iframe class="embed-responsive-item" frameborder="no" border="0" id="consolePanel"
-                    src="/html/service_list.html" width="100%" height="100%"></iframe>
-        </div>
-    </div>
-</div>
+<iframe frameborder="no" border="0" id="consolePanel" src="" width="100%" height="98%">
+</iframe>
 </body>
-
-<script>
-
-    var serviceId = null;
-    var functionId = null;
-    var triggerId = null;
-
-    var serviceDetailUrl = "/service/detail";
-    var serviceListUrl = "/service/list";
-    var serviceCreateUrl = "/service/create";
-    var serviceDeleteUrl = "/service/delete";
-
-    var functionDetailUrl = "/function/detail";
-    var functionCreateUrl = "/function/create";
-    var functionDeleteUrl = "/function/delete";
-    var functionExecuteUrl = "/function/execute";
-    var functionLogUrl = "/function/log";
-
-    var k8sFunctionExecuteUrl = "/function/k8sExecute";
-    var k8sFunctionLogUrl = "/function/k8sLog";
-
-    var triggerDetailUrl = "/trigger/detail";
-    var triggerCreateUrl = "/trigger/create";
-    var triggerDeleteUrl = "/trigger/delete";
-
-</script>
+<script src="/js/console.js"></script>
 </html>

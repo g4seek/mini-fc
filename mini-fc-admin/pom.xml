@@ -14,6 +14,9 @@
         <servlet-api.version>3.1.0</servlet-api.version>
         <mysql-connector.version>5.1.46</mysql-connector.version>
         <druid.version>1.1.10</druid.version>
+        <junit.version>4.12</junit.version>
+        <project.java.version>1.8</project.java.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
@@ -37,6 +40,23 @@
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
             <version>${druid.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.nutz</groupId>
+            <artifactId>nutz-plugins-mock</artifactId>
+            <version>${nutz.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.aliyun.fc.runtime</groupId>
+            <artifactId>fc-java-core</artifactId>
+            <version>1.0.0</version>
         </dependency>
 
     </dependencies>
@@ -66,9 +86,9 @@
                         <verbose>true</verbose>
                         <fork>true</fork>
                         <skip>true</skip>
-                        <encoding>UTF-8</encoding>
-                        <source>1.8</source>
-                        <target>1.8</target>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                        <source>${project.java.version}</source>
+                        <target>${project.java.version}</target>
                     </configuration>
                 </plugin>
                 <plugin>

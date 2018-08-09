@@ -49,4 +49,15 @@ public class FcOpsService {
         return response.getContent();
     }
 
+    public String getK8sOverview(String type) {
+        Response response = Http.get(FC_OPS_URL + "/getK8sOverview?type=" + type);
+        return response.getContent();
+    }
+
+    public String scaleDeployment(Integer targetNum, String deploymentName) {
+        Response response = Http
+            .get(FC_OPS_URL + "/scaleDeployment?targetNum=" + targetNum + "&deploymentName=" + deploymentName);
+        return response.getContent();
+    }
+
 }

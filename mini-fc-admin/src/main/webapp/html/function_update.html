@@ -9,38 +9,37 @@
         <div class="col-md-12">
             <h3>创建函数</h3>
             <form id="functionForm" action="">
+                <input type="hidden" name="id" id="functionId"/>
                 <div class="form-group">
                     <label>服务名称</label>
                     <input type="text" class="form-control" id="serviceName" name="serviceName" readonly/>
                 </div>
                 <div class="form-group">
                     <label>函数名称</label>
-                    <input type="text" class="form-control" name="functionName" required/>
+                    <input type="text" class="form-control" name="functionName" id="functionName" required readonly/>
                 </div>
                 <div class="form-group">
                     <label>函数描述</label>
-                    <textarea type="text" class="form-control" name="description" rows="5"></textarea>
+                    <textarea type="text" class="form-control" name="description" id="description" rows="5"></textarea>
                 </div>
                 <div class="form-group">
                     <label>运行环境</label>
-                    <select class="form-control" name="execEnviroment">
+                    <select class="form-control" name="execEnviroment" id="execEnviroment" readonly>
                         <option>Python2.7</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>函数入口</label>
-                    <input type="text" class="form-control" name="functionEntrance" placeholder="index.handler"
-                           required/>
+                    <input type="text" class="form-control" name="functionEntrance" id="functionEntrance" required/>
                 </div>
                 <div class="form-group">
                     <label>函数源代码</label>
-                    <textarea class="form-control" name="sourceCode" rows="20" placeholder=""></textarea>
+                    <textarea class="form-control" name="sourceCode" id="sourceCode" rows="20"></textarea>
                 </div>
                 <button type="submit" id="submitBtn" class="btn btn-primary">提交</button>
                 <button type="button" id="returnBtn" class="btn btn-default">返回</button>
-                <button type="reset" class="btn btn-danger">重置</button>
             </form>
         </div>
     </div>
 </div>
-<script src="/js/function_create.js"></script>
+<script src="/js/function_update.js"></script>

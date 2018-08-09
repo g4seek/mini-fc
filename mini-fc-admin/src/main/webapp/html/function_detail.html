@@ -4,163 +4,63 @@
 <link rel="stylesheet" href="/css/prism.css">
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-<h3>函数详情</h3>
-<h5>函数ID:<span id="functionId"></span></h5>
-<h5>服务名称:<span id="serviceName"></span></h5>
-<h5>函数名称:<span id="functionName"></span></h5>
-<h5>描述信息:<span id="description"></span></h5>
-<h5>运行环境:<span id="execEnviroment"></span></h5>
-<h5>函数入口:<span id="functionEntrance"></span></h5>
-<h5>函数源代码:</h5>
-<pre><code class="language-python line-numbers" id="sourceCode"></code></pre>
-<hr/>
-<h3>使用docker运行</h3>
-<button id="executeFunctionBtn" class="btn btn-default">运行函数</button>
-<button id="showExecuteLogBtn" class="btn btn-default">显示日志</button>
-<h5>函数访问地址:<span id="functionUri"></span></h5>
-<h5>执行日志:</h5>
-<pre><code class="language-shell" id="functionLog"></code></pre>
-<h3>使用kubernetes运行</h3>
-<button id="k8sExecuteFunctionBtn" class="btn btn-default">运行函数</button>
-<button id="k8sShowExecuteLogBtn" class="btn btn-default">显示日志</button>
-<h5>函数访问地址:<span id="k8sFunctionUri"></span></h5>
-<h5>执行日志:</h5>
-<pre><code class="language-shell" id="k8sFunctionLog"></code></pre>
-<hr/>
-<button id="createTriggerBtn" class="btn btn-primary">创建触发器</button>
-<h3>触发器列表</h3>
-<table id="triggerTable" class="table table-bordered">
-    <tr>
-        <td>id</td>
-        <td>名称</td>
-        <td>类型</td>
-        <td>操作</td>
-    </tr>
-</table>
-<br/>
-<button id="returnBtn" class="btn btn-default">返回</button>
-<script>
-    $(function () {
 
-        $.ajax({
-            type: "GET",
-            url: parent.window.functionDetailUrl,
-            data: {"id": parent.window.functionId},
-            success: function (result) {
-                var functionInfo = result.data.functionInfo;
-                $('#functionId').text(functionInfo.id);
-                $('#serviceName').text(functionInfo.serviceName);
-                $('#functionName').text(functionInfo.functionName);
-                $('#description').text(functionInfo.description);
-                $('#execEnviroment').text(functionInfo.execEnviroment);
-                $('#functionEntrance').text(functionInfo.functionEntrance);
-                $('#sourceCode').text(functionInfo.sourceCode);
-                var triggerInfoList = result.data.triggerInfoList;
-                for (let i = 0; i < triggerInfoList.length; i++) {
-                    let triggerInfo = triggerInfoList[i];
-                    let html = "<tr>" +
-                        "<td>" + triggerInfo.id + "</td>" +
-                        "<td>" + triggerInfo.triggerName + "</td>" +
-                        "<td>" + triggerInfo.triggerType + "</td>" +
-                        "<td>" +
-                        "<button class='btn btn-default' onclick='viewTriggerDetail(" + triggerInfo.id + ");'>详情</button>" +
-                        "<button class='btn btn-danger' onclick='deleteTrigger(this," + triggerInfo.id + ");'>删除</button>" +
-                        "</td>" +
-                        "</tr>";
-                    $('#triggerTable').append(html);
-                }
-            }
-        });
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>函数详情</h3>
+            <h5>函数ID:<span id="functionId"></span></h5>
+            <h5>服务名称:<span id="serviceName"></span></h5>
+            <h5>函数名称:<span id="functionName"></span></h5>
+            <h5>描述信息:<span id="description"></span></h5>
+            <h5>运行环境:<span id="execEnviroment"></span></h5>
+            <h5>函数入口:<span id="functionEntrance"></span></h5>
+            <h5>函数版本号:<span id="functionVersion"></span></h5>
+            <h5>函数源代码:</h5>
+            <pre><code class="language-python line-numbers" id="sourceCode"></code></pre>
+            <hr/>
+            <ul class="nav nav-tabs" id="executeTab">
+                <li class="active"><a href="#dockerPane">docker</a></li>
+                <li><a href="#kubernetesPane">kubernetes</a></li>
+            </ul>
+            <br/>
+            <div class="tab-content">
+                <div class="tab-pane active" id="dockerPane">
+                    <button id="executeFunctionBtn" class="btn btn-primary">运行函数</button>
+                    <button id="showExecuteLogBtn" class="btn btn-default">显示日志</button>
+                    <h5>函数访问地址:<span id="functionUri"></span></h5>
+                    <h5>执行日志:</h5>
+                    <pre><code class="language line-numbers" id="functionLog"></code></pre>
+                </div>
+                <div class="tab-pane" id="kubernetesPane">
+                    <button id="k8sExecuteFunctionBtn" class="btn btn-primary">运行函数</button>
+                    <button id="k8sShowExecuteLogBtn" class="btn btn-default">显示日志</button>
+                    <h5>函数访问地址:<span id="k8sFunctionUri"></span></h5>
+                    <h5>执行日志:</h5>
+                    <pre><code class="language line-numbers" id="k8sFunctionLog"></code></pre>
+                </div>
+            </div>
 
-        $('#createTriggerBtn').click(function () {
-            $("#consolePanel", window.parent.document).attr("src", "/html/trigger_create.html");
-        });
-        $("#returnBtn").click(function () {
-            $("#consolePanel", window.parent.document).attr("src", "/html/service_detail.html");
-        });
-        $("#executeFunctionBtn").click(function () {
-            $.ajax({
-                type: "GET",
-                url: parent.window.functionExecuteUrl,
-                data: {"id": parent.window.functionId},
-                success: function (result) {
-                    if (result.code.toString() === '200') {
-                        var functionUri = result.data;
-                        window.open(functionUri, "函数执行-" + parent.window.functionId, null, true);
-                        $('#functionUri').text(functionUri);
-                    } else {
-                        alert(result.errorMsg);
-                    }
-                }
-            });
-        });
-
-        $("#showExecuteLogBtn").click(function () {
-            $.ajax({
-                type: "GET",
-                url: parent.window.functionLogUrl,
-                data: {"id": parent.window.functionId},
-                success: function (result) {
-                    if (result.code.toString() === '200') {
-                        $("#functionLog").text(result.data);
-                    } else {
-                        $("#functionLog").text(result.errorMsg);
-                    }
-                }
-            });
-        });
-
-        $("#k8sExecuteFunctionBtn").click(function () {
-            $.ajax({
-                type: "GET",
-                url: parent.window.k8sFunctionExecuteUrl,
-                data: {"id": parent.window.functionId},
-                success: function (result) {
-                    if (result.code.toString() === '200') {
-                        var functionUri = result.data;
-                        window.open(functionUri, "函数执行-" + parent.window.functionId, null, true);
-                        $('#k8sFunctionUri').text(functionUri);
-                    } else {
-                        alert(result.errorMsg);
-                    }
-                }
-            });
-        });
-
-        $("#k8sShowExecuteLogBtn").click(function () {
-            $.ajax({
-                type: "GET",
-                url: parent.window.k8sFunctionLogUrl,
-                data: {"id": parent.window.functionId},
-                success: function (result) {
-                    if (result.code.toString() === '200') {
-                        $("#k8sFunctionLog").text(result.data);
-                    } else {
-                        $("#k8sFunctionLog").text(result.errorMsg);
-                    }
-                }
-            });
-        });
-    });
-
-    function viewTriggerDetail(triggerId) {
-        parent.window.triggerId = triggerId;
-        $("#consolePanel", window.parent.document).attr("src", "/html/trigger_detail.html");
-    }
-
-    function deleteTrigger(ele, triggerId) {
-        $.ajax({
-            type: "GET",
-            url: parent.window.triggerDeleteUrl,
-            data: {"id": triggerId},
-            success: function (result) {
-                if (result.code.toString() === '200') {
-                    $(ele).parent().parent().remove();
-                } else {
-                    alert(result.errorMsg);
-                }
-            }
-        });
-    }
-</script>
+            <hr/>
+            <!--
+            <button id="createTriggerBtn" class="btn btn-primary">创建触发器</button>
+            <h3>触发器列表</h3>
+            <table id="triggerTable" class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>id</th>
+                    <th>名称</th>
+                    <th>类型</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <br/>
+            -->
+            <button id="returnBtn" class="btn btn-default">返回</button>
+        </div>
+    </div>
+</div>
+<script src="/js/function_detail.js"></script>
 <script src="/js/prism.js"></script>

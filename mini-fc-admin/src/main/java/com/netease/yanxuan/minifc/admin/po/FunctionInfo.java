@@ -48,6 +48,11 @@ public class FunctionInfo {
     private String functionEntrance;
 
     /**
+     * 函数版本
+     */
+    private Integer functionVersion;
+
+    /**
      * 函数源代码
      */
     private String sourceCode;
@@ -108,6 +113,14 @@ public class FunctionInfo {
 
     public void setFunctionEntrance(String functionEntrance) {
         this.functionEntrance = functionEntrance;
+    }
+
+    public Integer getFunctionVersion() {
+        return functionVersion;
+    }
+
+    public void setFunctionVersion(Integer functionVersion) {
+        this.functionVersion = functionVersion;
     }
 
     public String getSourceCode() {

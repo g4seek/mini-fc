@@ -12,6 +12,8 @@ import java.util.Map;
 import org.nutz.dao.Cnd;
 import org.nutz.ioc.loader.annotation.Inject;
 import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Lang;
+import org.nutz.lang.Strings;
 import org.nutz.lang.util.Regex;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Ok;
@@ -24,7 +26,7 @@ import com.netease.yanxuan.minifc.admin.service.FcOpsService;
 
 /**
  * 函数管理模块
- * 
+ *
  * @author hzlvzimin
  */
 @At("/function")
@@ -72,6 +74,7 @@ public class FunctionInfoModule extends AbstractModule {
         if (functionInfoInDB != null) {
             return initFailureResult("创建函数失败!当前服务存在相同名称的函数");
         }
+        functionInfo.setFunctionVersion(1);
         functionInfo.setCreateTime(System.currentTimeMillis());
         functionInfo.setUpdateTime(System.currentTimeMillis());
         functionInfo = dao.insert(functionInfo);
@@ -81,6 +84,41 @@ public class FunctionInfoModule extends AbstractModule {
         } else {
             dao.delete(FunctionInfo.class, functionInfo.getId());
             return initFailureResult("创建函数失败!" + result);
+        }
+    }
+
+    @At("/update")
+    @Ok("json")
+    public AjaxResult update(@Param("..") FunctionInfo functionInfo) {
+        try {
+            validateFunctionInfo(functionInfo);
+        } catch (Exception e) {
+            return initFailureResult("修改函数失败!" + e.getMessage());
+        }
+        FunctionInfo functionInfoInDB = dao.fetch(FunctionInfo.class, functionInfo.getId());
+        if (functionInfoInDB == null) {
+            return initFailureResult("更新失败,函数不存在!");
+        }
+        FunctionInfo functionInfoToUpdate = new FunctionInfo();
+        Lang.copyProperties(functionInfoInDB, functionInfoToUpdate);
+        functionInfoToUpdate.setDescription(functionInfo.getDescription());
+        functionInfoToUpdate.setFunctionEntrance(functionInfo.getFunctionEntrance());
+        functionInfoToUpdate.setSourceCode(functionInfo.getSourceCode());
+        functionInfoToUpdate.setUpdateTime(System.currentTimeMillis());
+        boolean isSourceUpdated = !Strings.equals(functionInfo.getSourceCode(), functionInfoInDB.getSourceCode());
+        if (!isSourceUpdated) {
+            dao.update(functionInfoToUpdate);
+            return initSuccessResult("更新函数成功!");
+        } else {
+            functionInfoToUpdate.setFunctionVersion(functionInfoInDB.getFunctionVersion() + 1);
+            dao.update(functionInfoToUpdate);
+        }
+        String result = fcOpsService.createFunction(functionInfo.getId());
+        if ("ok".equals(result)) {
+            return initSuccessResult("更新函数成功!");
+        } else {
+            dao.update(functionInfoInDB);
+            return initFailureResult("更新函数失败!" + result);
         }
     }
 

@@ -17,6 +17,7 @@ CREATE TABLE `TB_MINIFC_FUNCTION_INFO` (
   `description` VARCHAR(512) DEFAULT '' COMMENT '描述信息',
   `execEnviroment` VARCHAR(16) NOT NULL DEFAULT '' COMMENT '运行环境',
   `functionEntrance` VARCHAR(128) NOT NULL DEFAULT '' COMMENT '函数入口',
+  `functionVersion` INT(11) NOT NULL DEFAULT 1 COMMENT '函数版本号',
   `sourceCode` MEDIUMTEXT NOT NULL COMMENT '函数源代码',
   `createTime` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 COMMENT '创建时间',
   `updateTime` BIGINT(20) UNSIGNED NOT NULL DEFAULT 0 COMMENT '更新时间',

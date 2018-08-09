@@ -4,79 +4,32 @@
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-<h3>服务详情</h3>
-<h5>服务ID:<span id="serviceId"></span></h5>
-<h5>服务名称:<span id="serviceName"></span></h5>
-<h5>服务描述:<span id="description"></span></h5>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>服务详情</h3>
+            <h5>服务ID:<span id="serviceId"></span></h5>
+            <h5>服务名称:<span id="serviceName"></span></h5>
+            <h5>服务描述:<span id="description"></span></h5>
 
-<hr/>
-<button id="createFunctionBtn" class="btn btn-primary">创建函数</button><br/>
-<h3>函数列表</h3>
-<table id="functionTable" class="table table-bordered">
-    <tr>
-        <td>id</td>
-        <td>名称</td>
-        <td>描述</td>
-        <td>操作</td>
-    </tr>
-</table>
-<br/>
-<button id="returnBtn" class="btn btn-default">返回</button>
-<script>
-    $(function () {
-
-        $.ajax({
-            type: "GET",
-            url: parent.window.serviceDetailUrl,
-            data: {"id": parent.window.serviceId},
-            success: function (result) {
-                var serviceInfo = result.data.serviceInfo;
-                $('#serviceId').text(serviceInfo.id);
-                $('#serviceName').text(serviceInfo.serviceName);
-                $('#description').text(serviceInfo.description);
-                var functionInfoList = result.data.functionInfoList;
-                for (let i = 0; i < functionInfoList.length; i++) {
-                    let functionInfo = functionInfoList[i];
-                    let html = "<tr>" +
-                        "<td>" + functionInfo.id + "</td>" +
-                        "<td>" + functionInfo.functionName + "</td>" +
-                        "<td>" + functionInfo.description + "</td>" +
-                        "<td>" +
-                        "<button class='btn btn-default' onclick='viewFunctionDetail(" + functionInfo.id + ");'>详情</button>" +
-                        "<button class='btn btn-danger' onclick='deleteFunction(this," + functionInfo.id + ");'>删除</button>" +
-                        "</td>" +
-                        "</tr>";
-                    $('#functionTable').append(html);
-                }
-            }
-        });
-
-        $('#createFunctionBtn').click(function () {
-            $("#consolePanel", window.parent.document).attr("src", "/html/function_create.html");
-        });
-        $("#returnBtn").click(function () {
-            $("#consolePanel", window.parent.document).attr("src", "/html/service_list.html");
-        });
-    });
-
-    function viewFunctionDetail(functionId) {
-        parent.window.functionId = functionId;
-        $("#consolePanel", window.parent.document).attr("src", "/html/function_detail.html");
-    }
-
-    function deleteFunction(ele, functionId) {
-        $.ajax({
-            type: "GET",
-            url: parent.window.functionDeleteUrl,
-            data: {"id": functionId},
-            success: function (result) {
-                if (result.code.toString() === '200') {
-                    $(ele).parent().parent().remove();
-                } else {
-                    alert(result.errorMsg);
-                }
-            }
-        });
-    }
-
-</script>
+            <hr/>
+            <button id="createFunctionBtn" class="btn btn-primary">创建函数</button>
+            <br/>
+            <h3>函数列表</h3>
+            <table id="functionTable" class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>id</th>
+                    <th>名称</th>
+                    <th>描述</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <br/>
+            <button id="returnBtn" class="btn btn-default">返回</button>
+        </div>
+    </div>
+</div>
+<script src="/js/service_detail.js"></script>

@@ -4,62 +4,24 @@
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
-<button id="serviceCreateBtn" class="btn btn-primary">创建服务</button>
-<h3>服务列表</h3>
-<table id="serviceTable" class="table table-bordered">
-    <tr>
-        <td>id</td>
-        <td>名称</td>
-        <td>描述</td>
-        <td>操作</td>
-    </tr>
-</table>
-<script>
-    $(function () {
-        $.ajax({
-            type: "GET",
-            url: parent.window.serviceListUrl,
-            data: {},
-            success: function (result) {
-                var serviceInfoList = result.data;
-                for (let i = 0; i < serviceInfoList.length; i++) {
-                    let serviceInfo = serviceInfoList[i];
-                    let html = "<tr>" +
-                        "<td>" + serviceInfo.id + "</td>" +
-                        "<td>" + serviceInfo.serviceName + "</td>" +
-                        "<td>" + serviceInfo.description + "</td>" +
-                        "<td>" +
-                        "<button class='btn btn-default' onclick='viewServiceDetail(" + serviceInfo.id + ");'>详情</button>" +
-                        "<button class='btn btn-danger' onclick='deleteService(this," + serviceInfo.id + ");'>删除</button>" +
-                        "</td>" +
-                        "</tr>";
-                    $('#serviceTable').append(html);
-                }
-            }
-        });
-
-        $("#serviceCreateBtn").click(function () {
-            $("#consolePanel", window.parent.document).attr("src", "/html/service_create.html")
-        });
-    });
-
-    function viewServiceDetail(serviceId) {
-        parent.window.serviceId = serviceId;
-        $("#consolePanel", window.parent.document).attr("src", "/html/service_detail.html");
-    }
-
-    function deleteService(ele, serviceId) {
-        $.ajax({
-            type: "GET",
-            url: parent.window.serviceDeleteUrl,
-            data: {"id": serviceId},
-            success: function (result) {
-                if (result.code.toString() === '200') {
-                    $(ele).parent().parent().remove();
-                } else {
-                    alert(result.errorMsg);
-                }
-            }
-        });
-    }
-</script>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <button id="serviceCreateBtn" class="btn btn-primary">创建服务</button>
+            <button id="k8sOverviewBtn" class="btn btn-default">kubernetes运行状态</button>
+            <h3>服务列表</h3>
+            <table id="serviceTable" class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>id</th>
+                    <th>名称</th>
+                    <th>描述</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="/js/service_list.js"></script>

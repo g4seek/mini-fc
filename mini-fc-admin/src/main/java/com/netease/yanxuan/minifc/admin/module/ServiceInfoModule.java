@@ -22,7 +22,7 @@ import com.netease.yanxuan.minifc.admin.po.ServiceInfo;
 
 /**
  * 服务管理模块
- * 
+ *
  * @author hzlvzimin
  */
 @At("/service")
@@ -69,6 +69,25 @@ public class ServiceInfoModule extends AbstractModule {
         return initSuccessResult("创建服务成功!");
     }
 
+    @At("/update")
+    @Ok("json")
+    public AjaxResult update(@Param("..") ServiceInfo serviceInfo) {
+        try {
+            validateServiceInfo(serviceInfo);
+        } catch (Exception e) {
+            return initFailureResult("修改函数失败!" + e.getMessage());
+        }
+        Long id = serviceInfo.getId();
+        ServiceInfo serviceInfoInDB = dao.fetch(ServiceInfo.class, id);
+        if (serviceInfoInDB == null) {
+            return initFailureResult("更新失败,服务不存在!");
+        }
+        serviceInfoInDB.setDescription(serviceInfo.getDescription());
+        serviceInfoInDB.setUpdateTime(System.currentTimeMillis());
+        dao.update(serviceInfoInDB);
+        return initSuccessResult("更新服务成功!");
+    }
+
     @At("/delete")
     @Ok("json")
     public AjaxResult delete(Long id) {
@@ -88,7 +107,7 @@ public class ServiceInfoModule extends AbstractModule {
 
     private void validateServiceInfo(ServiceInfo serviceInfo) throws Exception {
         String serviceName = serviceInfo.getServiceName();
-        boolean isMatch = Regex.match("^[a-z|A-Z][a-z|A-Z|0-9|\\-]+$" ,serviceName);
+        boolean isMatch = Regex.match("^[a-z|A-Z][a-z|A-Z|0-9|\\-]+$", serviceName);
         if (!isMatch) {
             throw new Exception("服务名称需要以英文字母开头,并且只包含英文字母、数字和中划线");
         }

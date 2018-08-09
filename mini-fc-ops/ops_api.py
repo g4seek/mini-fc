@@ -1,4 +1,5 @@
 # coding=utf-8
+import traceback
 from BaseHTTPServer import BaseHTTPRequestHandler
 from BaseHTTPServer import HTTPServer
 from SocketServer import ThreadingMixIn
@@ -10,10 +11,6 @@ import configs
 import docker_tool
 import k8s_tool
 from logger_util import logger
-
-
-class MultiThreadedHTTPServer(ThreadingMixIn, HTTPServer):
-    pass
 
 
 # 创建函数
@@ -53,20 +50,33 @@ def get_k8s_execute_log(function_id):
     return k8s_tool.get_pod_log(function_info)
 
 
+# 获取k8s运行状况
+def get_k8s_overview(type):
+    return k8s_tool.get_k8s_overview(type)
+
+
+# 对部署进行扩容或缩容
+def scale_deployment(target_num, deployment_name):
+    return k8s_tool.scale_deployment(target_num, deployment_name)
+
+
 # 通过代理访问方法
-def function_proxy(param_map):
-    path = param_map["path"]
-    service_name = param_map["serviceName"]
-    function_name = param_map["functionName"]
-    del param_map["serviceName"]
-    del param_map["functionName"]
-    del param_map["path"]
+def function_proxy(uri, param_map):
+    if uri.count("/") < 4:
+        return "Invalid uri. should be: /proxy/${serviceName}/${functionName}/${path}"
+    first_slash = uri.find("/")
+    second_slash = uri.find("/", first_slash + 1)
+    third_slash = uri.find("/", second_slash + 1)
+    fourth_slash = uri.find("/", third_slash + 1)
+    service_name = uri[second_slash + 1: third_slash]
+    function_name = uri[third_slash + 1: fourth_slash]
+    path = uri[fourth_slash + 1:]
     if not path:
-        path = "/"
+        path = ""
     container_name = "minifc_{0}_{1}".format(service_name, function_name)
     execute_port = docker_tool.get_run_port(container_name)
     execute_url = "http://{0}:{1}/{2}".format(configs.mini_fc_host, execute_port, path)
-    if not param_map:
+    if param_map:
         execute_url += "?"
         for key in param_map.keys():
             execute_url += key
@@ -77,16 +87,17 @@ def function_proxy(param_map):
 
 
 # 通过代理访问k8s服务
-def k8s_function_proxy(param_map):
-    service = param_map["service"]
-    path = param_map["path"]
-    if not path:
-        path = "/"
-    del param_map["service"]
-    del param_map["path"]
-    execute_url = "http://127.0.0.1:{0}/api/v1/namespaces/default/services/minifc-python-test-hello-k8s/proxy/".format(
-        configs.kubectl_proxy_port)
-    if not param_map:
+def k8s_function_proxy(uri, param_map):
+    if uri.count("/") < 3:
+        return "Invalid uri. should be: /k8sProxy/${service}/${path}"
+    first_slash = uri.find("/")
+    second_slash = uri.find("/", first_slash + 1)
+    third_slash = uri.find("/", second_slash + 1)
+    service = uri[second_slash + 1: third_slash]
+    path = uri[third_slash + 1:]
+    execute_url = "http://127.0.0.1:{0}/api/v1/namespaces/{1}/services/{2}/proxy/{3}".format(
+        configs.kubectl_proxy_port, configs.k8s_namespace, service, path)
+    if param_map:
         execute_url += "?"
         for key in param_map.keys():
             execute_url += key
@@ -102,12 +113,12 @@ class OpsApiHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
         self.end_headers()
-        uri = self.path
+        uri = str(self.path)
         param_map = {}
         # 从uri中提取参数
         if self.path.find("?") > 0:
             question_index = self.path.index("?")
-            uri = self.path[:question_index]
+            uri = str(self.path[:question_index])
             param_pairs = self.path[question_index + 1:].split("&")
             for param_pair in param_pairs:
                 key = param_pair.split("=")[0]
@@ -126,8 +137,6 @@ class OpsApiHandler(BaseHTTPRequestHandler):
             elif uri == "/deleteFunction":
                 function_id = param_map["functionId"]
                 result = delete_function(function_id)
-            elif uri == "/functionProxy":
-                result = function_proxy(param_map)
             elif uri == "/getExecuteLog":
                 function_id = param_map["functionId"]
                 result = get_execute_log(function_id)
@@ -137,12 +146,27 @@ class OpsApiHandler(BaseHTTPRequestHandler):
             elif uri == "/getK8sExecuteLog":
                 function_id = param_map["functionId"]
                 result = get_k8s_execute_log(function_id)
-            elif uri == "/k8sFunctionProxy":
-                result = k8s_function_proxy(param_map)
+            elif uri == "/getK8sOverview":
+                type = param_map["type"]
+                result = get_k8s_overview(type)
+            elif uri == "/scaleDeployment":
+                target_num = param_map["targetNum"]
+                deployment_name = param_map["deploymentName"]
+                result = scale_deployment(target_num, deployment_name)
+            elif uri.find("/proxy") == 0:
+                result = function_proxy(uri, param_map)
+            elif uri.find("/k8sProxy") == 0:
+                result = k8s_function_proxy(uri, param_map)
         except Exception as e:
+            msg = traceback.format_exc()
+            logger.error("Exception:" + msg)
             result = e.message
-        logger.info("result:" + str(result))
+        logger.info("request:{0},response:{1}".format(self.path, result))
         self.wfile.write(result)
+
+
+class MultiThreadedHTTPServer(ThreadingMixIn, HTTPServer):
+    pass
 
 
 if __name__ == '__main__':

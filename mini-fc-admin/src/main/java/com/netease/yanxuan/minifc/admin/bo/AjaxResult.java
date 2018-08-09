@@ -30,28 +30,28 @@ public class AjaxResult extends LinkedHashMap<String, Object> {
         setErrorMsg(errorMsg);
     }
 
-    public void setCode(String code) {
-        put(CODE, code);
-    }
-
     public String getCode() {
         return (String) get(CODE);
     }
 
-    public void setData(Object data) {
-        put(DATA, data);
+    public void setCode(String code) {
+        put(CODE, code);
     }
 
     public Object getData() {
         return get(DATA);
     }
 
-    public void setErrorMsg(String errorMsg) {
-        put(ERROR_MSG, errorMsg);
+    public void setData(Object data) {
+        put(DATA, data);
     }
 
     public String getErrorMsg() {
         return (String) get(ERROR_MSG);
+    }
+
+    public void setErrorMsg(String errorMsg) {
+        put(ERROR_MSG, errorMsg);
     }
 
 }

@@ -7,21 +7,21 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <h3>创建服务</h3>
+            <h3>修改服务</h3>
             <form id="serviceForm" action="">
+                <input type="hidden" name="id" id="serviceId"/>
                 <div class="form-group">
                     <label>服务名称</label>
-                    <input type="text" class="form-control" name="serviceName" required/>
+                    <input type="text" class="form-control" name="serviceName" id="serviceName" required readonly/>
                 </div>
                 <div class="form-group">
                     <label>服务描述</label>
-                    <textarea type="text" class="form-control" name="description" rows="5"></textarea>
+                    <textarea type="text" class="form-control" name="description" id="description" rows="5"></textarea>
                 </div>
                 <button type="submit" id="submitBtn" class="btn btn-primary">提交</button>
                 <button type="button" id="returnBtn" class="btn btn-default">返回</button>
-                <button type="reset" class="btn btn-danger">重置</button>
             </form>
         </div>
     </div>
 </div>
-<script src="/js/service_create.js"></script>
+<script src="/js/service_update.js"></script>

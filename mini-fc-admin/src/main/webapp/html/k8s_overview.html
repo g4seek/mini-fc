@@ -1,0 +1,63 @@
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <button type="button" id="refreshBtn" class="btn btn-primary">刷新</button>
+            <button type="button" id="returnBtn" class="btn btn-default">返回</button>
+            <h3>pod</h3>
+            <table id="podsTable" class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>NAME</th>
+                    <th>READY</th>
+                    <th>STATUS</th>
+                    <th>RESTARTS</th>
+                    <th>AGE</th>
+                    <th>IP</th>
+                    <th>NODE</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <h3>deployment</h3>
+            <table id="deploymentsTable" class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>NAME</th>
+                    <th>DESIRED</th>
+                    <th>CURRENT</th>
+                    <th>UP-TO-DATE</th>
+                    <th>AVAILABLE</th>
+                    <th>AGE</th>
+                    <th>CONTAINERS</th>
+                    <th>IMAGES</th>
+                    <th>SELECTOR</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <h3>service</h3>
+            <table id="servicesTable" class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>NAME</th>
+                    <th>TYPE</th>
+                    <th>CLUSTER-IP</th>
+                    <th>EXTERNAL-IP</th>
+                    <th>PORT(S)</th>
+                    <th>AGE</th>
+                    <th>SELECTOR</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="/js/k8s_overview.js"></script>
