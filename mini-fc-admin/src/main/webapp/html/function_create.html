@@ -25,16 +25,26 @@
                     <label>运行环境</label>
                     <select class="form-control" name="execEnviroment">
                         <option>Python2.7</option>
+                        <option>Java8</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>函数入口</label>
+                    <label>函数入口 (格式:${无后缀文件名}.${入口函数名})</label>
                     <input type="text" class="form-control" name="functionEntrance" placeholder="index.handler"
                            required/>
                 </div>
                 <div class="form-group">
-                    <label>函数源代码</label>
+                    <label>函数源代码 (<a href="https://git.mail.netease.com/hzlvzimin/mini-fc/tree/master/mini-fc-examples" target="_Blank">示例</a>)</label>
                     <textarea class="form-control" name="sourceCode" rows="20" placeholder=""></textarea>
+                </div>
+                <div class="form-group">
+                    <label>源代码文件(java支持jar格式,python支持zip格式)</label>
+                    <button type="button" id="uploadBtn" class="btn btn-default">上传</button>
+                    <input type="file" name="sourceFile" id="sourceFile" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>文件上传路径</label>
+                    <input type="text" class="form-control" name="uploadFilePath" id="uploadFilePath"/>
                 </div>
                 <button type="submit" id="submitBtn" class="btn btn-primary">提交</button>
                 <button type="button" id="returnBtn" class="btn btn-default">返回</button>

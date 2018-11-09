@@ -27,13 +27,13 @@ def handler(environ, start_response):
 
 
 def get_code_by_name(city_name):
-    city_map = {"北京": "101010100", "上海": "101020100", "天津": "101030100", "重庆": "101040100", "济南": "101120101",
-                "石家庄": "101090101", "长春": "101060101", "哈尔滨": "101050101", "沈阳": "101070101", "呼和浩特": "101080101",
-                "乌鲁木齐": "101130101", "兰州": "101160101", "银川": "101170101", "太原": "101100101", "西安": "101110101",
-                "郑州": "101180101", "合肥": "101220101", "南京": "101190101", "杭州": "101210101", "福州": "101230101",
-                "广州": "101280101", "南昌": "101240101", "海口": "101310101", "南宁": "101300101", "贵阳": "101260101",
-                "长沙": "101250101", "武汉": "101200101", "成都": "101270101", "昆明": "101290101", "拉萨": "101140101",
-                "西宁": "101150101", "台北": "101340101", "香港": "101320101", "澳门": "101330101"}
+    city_map = {"北京": "2", "上海": "39", "天津": "24", "重庆": "52", "济南": "1399",
+                "石家庄": "1742", "长春": "182", "哈尔滨": "250", "沈阳": "94", "呼和浩特": "2036",
+                "乌鲁木齐": "2505", "兰州": "2331", "银川": "2299", "太原": "1909", "西安": "2182",
+                "郑州": "379", "合肥": "1547", "南京": "1045", "杭州": "1185", "福州": "1654",
+                "广州": "886", "南昌": "1286", "海口": "1020", "南宁": "776", "贵阳": "2982",
+                "长沙": "650", "武汉": "537", "成都": "2635", "昆明": "2827", "拉萨": "3084",
+                "西宁": "2440", "台北": "3179", "香港": "3173", "澳门": "3176"}
     if city_name not in city_map:
         raise Exception(
             "当前城市无法查询,城市列表:北京,上海,天津,重庆,济南,石家庄,长春,哈尔滨,沈阳,呼和浩特,乌鲁木齐,兰州,银川,太原,西安,郑州,合肥,南京,杭州,福州,广州,南昌,海口,南宁,贵阳,长沙,武汉,成都,昆明,拉萨,西宁,台北,香港,澳门")
@@ -41,16 +41,22 @@ def get_code_by_name(city_name):
 
 
 def get_weather_by_code(city_code):
-    url = "http://www.weather.com.cn/data/cityinfo/{0}.html".format(city_code)
-    content = requests.get(url).content
+    url = 'http://freecityid.market.alicloudapi.com/whapi/json/alicityweather/briefcondition'
+    app_code = 'ce5df0b3232c45f6a3c843808e0300a8'
+    token = '46e13b7aab9bb77ee3358c3b672a2ae4'
+
+    headers = {'Authorization': 'APPCODE ' + app_code}
+    body = {'cityId': city_code, 'token': token}
+    content = requests.post(url=url, data=body, headers=headers).content
     data = json.loads(content)
-    if not data["weatherinfo"]:
+    if not data["data"]:
         raise Exception("无天气信息")
-    temp1 = data["weatherinfo"]["temp1"].encode('utf-8')
-    temp2 = data["weatherinfo"]["temp2"].encode('utf-8')
-    weather = data["weatherinfo"]["weather"].encode('utf-8')
-    city = data["weatherinfo"]["city"].encode('utf-8')
-    weather_info = "城市:{0},天气:{1},最高气温:{2},最低气温:{3}".format(city, weather, temp2, temp1)
+    city = data["data"]["city"]["name"].encode('utf-8')
+    condition = data["data"]["condition"]["condition"].encode('utf-8')
+    temp = data["data"]["condition"]["temp"]
+    windDir = data["data"]["condition"]["windDir"].encode('utf-8')
+    windLevel = data["data"]["condition"]["windLevel"]
+    weather_info = "城市:{0},天气:{1},温度:{2}℃,风力:{3}{4}级".format(city, condition, temp, windDir, windLevel)
     return weather_info
 
 

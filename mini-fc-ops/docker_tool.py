@@ -1,64 +1,22 @@
 # coding=utf-8
-import fileinput
-import os
-import random
-
 import docker
 import docker.errors
 
+import common_util
 import configs
-from logger_util import logger
+import file_tool
+from common_util import logger
 
 client = docker.from_env()
 
 
 # 构建镜像
 def build_image(function_info):
-    # 生成随机ID,防止文件名重复
-    random_id = random.randint(10000, 99999)
-
     # 创建Dockerfile的目录
-    docker_file_dir = ""
-    if function_info.exec_enviroment == 'Python2.7':
-        service_dir = configs.docker_file_root_python + "/" + function_info.service_name + "/"
-        docker_file_dir = service_dir + function_info.function_name + "/"
-        command = "rm -rf " + docker_file_dir
-        execute_print_cmd(command)
-        if not os.path.exists(service_dir):
-            os.mkdir(service_dir)
-        if not os.path.exists(docker_file_dir):
-            os.mkdir(docker_file_dir)
-
-        # 将模板文件拷贝到指定目录
-        command = "cp {0}/template/python2.7/Dockerfile {1}".format(configs.project_root, docker_file_dir)
-        execute_print_cmd(command)
-        command = "cp {0}/template/python2.7/requirements.txt {1}".format(configs.project_root, docker_file_dir)
-        execute_print_cmd(command)
-        command = "cp {0}/template/python2.7/server.py.tmpl {1}".format(configs.project_root, docker_file_dir)
-        execute_print_cmd(command)
-
-        # 使用函数配置信息替换文件模板中的占位符
-        docker_file_path = docker_file_dir + "Dockerfile"
-        for line in fileinput.input(docker_file_path, inplace=1):
-            line = line.replace("${MODULE_NAME}", function_info.file_name).replace("${RANDOM}", str(random_id))
-            print line,
-
-        server_file_path = docker_file_dir + "server.py.tmpl"
-        logger.info(server_file_path)
-        for line in fileinput.input(server_file_path, inplace=1):
-            line = line.replace("${MODULE_NAME}", function_info.file_name).replace("${METHOD_NAME}",
-                                                                                   function_info.method_name)
-            print line,
-
-        # 将函数源代码生成文件,放入构建目录
-        source_file = open(docker_file_dir + function_info.file_name + ".py", "w+")
-        source_file.write(function_info.source_code)
-        source_file.close()
-    elif function_info.exec_enviroment == 'Java8':
-        pass
+    docker_file_dir = file_tool.generate_docker_file(function_info)
 
     # 构建docker镜像
-    image_name = get_image_name(function_info)
+    image_name = common_util.get_image_name(function_info)
 
     logger.info("building image,image_name:" + image_name)
     client.images.build(tag=image_name, path=docker_file_dir)
@@ -90,7 +48,7 @@ def remove_image(function_info):
     except:
         pass
 
-    image_name = get_image_name(function_info)
+    image_name = common_util.get_image_name(function_info)
     try:
         image = client.images.get(image_name)
         if image:
@@ -111,14 +69,14 @@ def remove_image(function_info):
         pass
 
     cmd = "docker images | grep -E '.*{0}\s+v.*' | awk '{1}' | xargs docker rmi -f".format(image_name, "{print $3}")
-    execute_print_cmd(cmd)
+    common_util.execute_print_cmd(cmd)
     return "ok"
 
 
 # 运行容器
 def run_container(function_info):
     container_name = get_container_name(function_info)
-    newest_image_name = get_image_name_with_version(function_info)
+    newest_image_name = common_util.get_image_name_with_version(function_info)
     # 查询docker容器是否存在
     try:
         container = client.containers.get(container_name)
@@ -127,8 +85,8 @@ def run_container(function_info):
         if newest_image_name not in running_image_tags:
             logger.info("container is old version, stop and run new container")
             client.api.remove_container(container_name, force=True)
-            container = client.containers.run(newest_image_name, name=container_name, publish_all_ports=True,
-                                              detach=True)
+            container = client.containers.run(
+                newest_image_name, name=container_name, publish_all_ports=True, detach=True)
             logger.info("new container running,container_id:" + container.id)
         else:
             # 如果没有运行,则运行
@@ -145,9 +103,7 @@ def run_container(function_info):
     # 获取容器映射的端口号
     port = get_run_port(container_name)
     if port != '0':
-        proxy_url = 'http://{0}:{1}/proxy/{2}/{3}/{4}'.format(
-            configs.mini_fc_host, configs.mini_fc_ops_port, function_info.service_name, function_info.function_name, '')
-        return proxy_url
+        return 'http://{0}:{1}'.format(configs.mini_fc_host, port)
     else:
         return '函数运行失败,请查看日志'
 
@@ -155,7 +111,7 @@ def run_container(function_info):
 # 获取容器日志
 def get_container_log(function_info):
     container_name = get_container_name(function_info)
-    return client.api.logs(container_name)
+    return client.api.logs(container_name, tail=20)
 
 
 # 获取运行端口
@@ -168,22 +124,6 @@ def get_run_port(container_name):
         return '0'
 
 
-# 获取镜像名称
-def get_image_name(function_info):
-    return "minifc_{0}_{1}".format(function_info.service_name, function_info.function_name)
-
-
-# 获取带版本的镜像名称
-def get_image_name_with_version(function_info):
-    return "minifc_{0}_{1}:v{2}".format(function_info.service_name, function_info.function_name,
-                                        function_info.function_version)
-
-
 # 获取容器名称
 def get_container_name(function_info):
     return "minifc_{0}_{1}".format(function_info.service_name, function_info.function_name)
-
-
-def execute_print_cmd(cmd):
-    logger.info(cmd)
-    os.system(cmd)

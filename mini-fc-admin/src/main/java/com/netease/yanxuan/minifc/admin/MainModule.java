@@ -12,7 +12,7 @@ import org.nutz.mvc.annotation.IocBy;
  * 
  * @author hzlvzimin
  */
-@IocBy(args = { "*js", "dao.js", "*anno", "com.netease.yanxuan.minifc.admin" })
+@IocBy(args = { "*js", "config.js", "*anno", "com.netease.yanxuan.minifc.admin" })
 public class MainModule {
 
 }

@@ -16,6 +16,8 @@ var functionUpdateUrl = "/function/update";
 var functionDeleteUrl = "/function/delete";
 var functionExecuteUrl = "/function/execute";
 var functionLogUrl = "/function/log";
+var functionProxyUrl = "/function/proxy";
+var functionUploadUrl = "/function/upload";
 
 var k8sFunctionExecuteUrl = "/function/k8sExecute";
 var k8sFunctionLogUrl = "/function/k8sLog";

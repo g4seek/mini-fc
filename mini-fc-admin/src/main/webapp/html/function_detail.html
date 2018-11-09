@@ -16,8 +16,13 @@
             <h5>运行环境:<span id="execEnviroment"></span></h5>
             <h5>函数入口:<span id="functionEntrance"></span></h5>
             <h5>函数版本号:<span id="functionVersion"></span></h5>
-            <h5>函数源代码:</h5>
-            <pre><code class="language-python line-numbers" id="sourceCode"></code></pre>
+            <div id="sourceCodeDiv" style="display: none">
+                <h5>函数源代码:</h5>
+                <pre><code class="line-numbers" id="sourceCode"></code></pre>
+            </div>
+            <div id="uploadFilePathDiv" style="display: none">
+                <h5>文件上传路径:<span id="uploadFilePath"></span></h5>
+            </div>
             <hr/>
             <ul class="nav nav-tabs" id="executeTab">
                 <li class="active"><a href="#dockerPane">docker</a></li>
@@ -26,22 +31,46 @@
             <br/>
             <div class="tab-content">
                 <div class="tab-pane active" id="dockerPane">
-                    <button id="executeFunctionBtn" class="btn btn-primary">运行函数</button>
+                    <button id="showFunctionUrlBtn" class="btn btn-primary">显示访问地址</button>
                     <button id="showExecuteLogBtn" class="btn btn-default">显示日志</button>
-                    <h5>函数访问地址:<span id="functionUri"></span></h5>
                     <h5>执行日志:</h5>
                     <pre><code class="language line-numbers" id="functionLog"></code></pre>
                 </div>
                 <div class="tab-pane" id="kubernetesPane">
-                    <button id="k8sExecuteFunctionBtn" class="btn btn-primary">运行函数</button>
+                    <button id="k8sShowFunctionUrlBtn" class="btn btn-primary">显示访问地址</button>
                     <button id="k8sShowExecuteLogBtn" class="btn btn-default">显示日志</button>
-                    <h5>函数访问地址:<span id="k8sFunctionUri"></span></h5>
                     <h5>执行日志:</h5>
                     <pre><code class="language line-numbers" id="k8sFunctionLog"></code></pre>
                 </div>
             </div>
-
             <hr/>
+            <div class="form-group">
+                <label>函数访问地址</label>
+                <input type="text" class="form-control" id="functionUri"/>
+            </div>
+            <div class="form-group">
+                <label>数据格式</label>
+                <label class="radio-inline">
+                    <input type="radio" name="requestTypeRadio" value="form" checked>Form
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="requestTypeRadio" value="json">Json
+                </label>
+            </div>
+            <div class="form-group">
+                <label>请求报文</label>
+                <div id="formRequestDiv">
+                    修改函数访问地址,添加请求参数
+                </div>
+                <div id="jsonRequestDiv">
+                    <textarea class="form-control" id="jsonRequestData" rows="5"></textarea>
+                </div>
+            </div>
+            <button id="functionExecuteBtn" class="btn btn-primary">执行函数</button>
+            <h5>执行结果</h5>
+            <pre><code class="language line-numbers" id="executeResultSpan"></code></pre>
+            <hr/>
+
             <!--
             <button id="createTriggerBtn" class="btn btn-primary">创建触发器</button>
             <h3>触发器列表</h3>

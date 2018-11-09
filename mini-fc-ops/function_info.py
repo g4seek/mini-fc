@@ -1,5 +1,7 @@
 # coding=utf-8
 import sys
+
+
 class FunctionInfo:
 
     def __init__(self, function_info):
@@ -21,3 +23,5 @@ class FunctionInfo:
         self.source_code = str(function_info["sourceCode"])
         # 运行环境
         self.exec_enviroment = str(function_info["execEnviroment"])
+        # 上传文件的路径
+        self.upload_file_path = str(function_info["uploadFilePath"])

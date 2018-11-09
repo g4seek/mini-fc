@@ -11,7 +11,22 @@ $.ajax({
         $('#execEnviroment').text(functionInfo.execEnviroment);
         $('#functionEntrance').text(functionInfo.functionEntrance);
         $('#functionVersion').text(functionInfo.functionVersion);
-        $('#sourceCode').text(functionInfo.sourceCode);
+        if (functionInfo.sourceCode !== '') {
+            $('#sourceCode').text(functionInfo.sourceCode);
+            if (functionInfo.execEnviroment === "Java8") {
+                $('#sourceCode').addClass("language-java")
+            } else if (functionInfo.execEnviroment === "Python2.7") {
+                $('#sourceCode').addClass("language-python")
+            }
+            $('#sourceCodeDiv').show();
+            Prism.highlightAll();
+
+        }
+        if (functionInfo.uploadFilePath !== '') {
+            $('#uploadFilePath').text(functionInfo.uploadFilePath);
+            $('#uploadFilePathDiv').show();
+        }
+
         /*
         var triggerInfoList = result.data.triggerInfoList;
         for (let i = 0; i < triggerInfoList.length; i++) {
@@ -28,11 +43,12 @@ $.ajax({
             $('#triggerTable tbody').append(html);
         }
         */
-        Prism.highlightAll();
+
     }
 });
 
 $("#executeTab a:first").tab("show");
+$("#jsonRequestDiv").hide();
 /*
 $('#createTriggerBtn').click(function () {
     $("#consolePanel", window.parent.document).attr("src", "/html/trigger_create.html");
@@ -41,7 +57,7 @@ $('#createTriggerBtn').click(function () {
 $("#returnBtn").click(function () {
     $("#consolePanel", window.parent.document).attr("src", "/html/service_detail.html");
 });
-$("#executeFunctionBtn").click(function () {
+$("#showFunctionUrlBtn").click(function () {
     $.ajax({
         type: "GET",
         url: parent.window.functionExecuteUrl,
@@ -49,8 +65,7 @@ $("#executeFunctionBtn").click(function () {
         success: function (result) {
             if (result.code.toString() === '200') {
                 var functionUri = result.data;
-                window.open(functionUri, "函数执行-" + parent.window.functionId, null, true);
-                $('#functionUri').text(functionUri);
+                $('#functionUri').val(functionUri);
             } else {
                 alert(result.errorMsg);
             }
@@ -73,7 +88,7 @@ $("#showExecuteLogBtn").click(function () {
     });
 });
 
-$("#k8sExecuteFunctionBtn").click(function () {
+$("#k8sShowFunctionUrlBtn").click(function () {
     $.ajax({
         type: "GET",
         url: parent.window.k8sFunctionExecuteUrl,
@@ -81,8 +96,7 @@ $("#k8sExecuteFunctionBtn").click(function () {
         success: function (result) {
             if (result.code.toString() === '200') {
                 var functionUri = result.data;
-                window.open(functionUri, "函数执行-" + parent.window.functionId, null, true);
-                $('#k8sFunctionUri').text(functionUri);
+                $('#functionUri').val(functionUri);
             } else {
                 alert(result.errorMsg);
             }
@@ -105,10 +119,45 @@ $("#k8sShowExecuteLogBtn").click(function () {
     });
 });
 
+$("input[name='requestTypeRadio']").change(function () {
+    var value = $("input[name='requestTypeRadio']:checked").val();
+    if (value === "json") {
+        $("#formRequestDiv").hide();
+        $("#jsonRequestDiv").show();
+    } else if (value === "form") {
+        $("#formRequestDiv").show();
+        $("#jsonRequestDiv").hide();
+    }
+});
+
 $("#executeTab a").click(function (e) {
     e.preventDefault();
     $(this).tab('show');
-})
+});
+
+$("#functionExecuteBtn").click(function () {
+    var requestType = $("input[name='requestTypeRadio']:checked").val();
+    var requestUri = $('#functionUri').val();
+    var requestData = $("#jsonRequestData").val();
+
+    $.ajax({
+        type: "POST",
+        url: parent.window.functionProxyUrl,
+        data: {
+            requestUri: requestUri,
+            requestData: requestData,
+            method: "POST",
+            contentType: requestType
+        },
+        success: function (result) {
+            if (result.code.toString() === '200') {
+                $("#executeResultSpan").text(result.data);
+            } else {
+                $("#executeResultSpan").text(result.errorMsg);
+            }
+        }
+    });
+});
 
 /*
 function viewTriggerDetail(triggerId) {

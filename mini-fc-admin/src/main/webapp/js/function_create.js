@@ -28,6 +28,26 @@ $("#functionForm").submit(function (e) {
     });
 });
 
+$("#uploadBtn").click(function () {
+    var formData = new FormData();
+    formData.append('sourceFile', $('#sourceFile')[0].files[0]);
+    $.ajax({
+        type: "POST",
+        url: parent.window.functionUploadUrl,
+        data: formData,
+        // dataType: "json",
+        contentType: false,
+        processData: false,
+        success: function (result) {
+            if (result.code.toString() === "200") {
+                $("#uploadFilePath").val(result.data);
+            } else {
+                alert(result.errorMsg);
+            }
+        }
+    });
+});
+
 $("#returnBtn").click(function () {
     $("#consolePanel", window.parent.document).attr("src", "/html/service_detail.html");
 });

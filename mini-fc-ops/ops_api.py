@@ -10,7 +10,7 @@ import admin_proxy
 import configs
 import docker_tool
 import k8s_tool
-from logger_util import logger
+from common_util import logger
 
 
 # 创建函数

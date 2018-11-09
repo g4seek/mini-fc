@@ -11,6 +11,7 @@ $.ajax({
         $('#execEnviroment').val(functionInfo.execEnviroment);
         $('#functionEntrance').val(functionInfo.functionEntrance);
         $('#sourceCode').val(functionInfo.sourceCode);
+        $('#uploadFilePath').val(functionInfo.uploadFilePath);
     }
 });
 
@@ -29,6 +30,26 @@ $("#functionForm").submit(function (e) {
             } else {
                 alert(result.errorMsg);
                 $('button').attr("disabled", false);
+            }
+        }
+    });
+});
+
+$("#uploadBtn").click(function () {
+    var formData = new FormData();
+    formData.append('sourceFile', $('#sourceFile')[0].files[0]);
+    $.ajax({
+        type: "POST",
+        url: parent.window.functionUploadUrl,
+        data: formData,
+        // dataType: "json",
+        contentType: false,
+        processData: false,
+        success: function (result) {
+            if (result.code.toString() === "200") {
+                $("#uploadFilePath").val(result.data);
+            } else {
+                alert(result.errorMsg);
             }
         }
     });

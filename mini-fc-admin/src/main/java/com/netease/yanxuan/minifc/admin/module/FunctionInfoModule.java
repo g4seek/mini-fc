@@ -5,24 +5,32 @@
  */
 package com.netease.yanxuan.minifc.admin.module;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.nutz.dao.Cnd;
-import org.nutz.ioc.loader.annotation.Inject;
-import org.nutz.ioc.loader.annotation.IocBean;
-import org.nutz.lang.Lang;
-import org.nutz.lang.Strings;
-import org.nutz.lang.util.Regex;
-import org.nutz.mvc.annotation.At;
-import org.nutz.mvc.annotation.Ok;
-import org.nutz.mvc.annotation.Param;
-
 import com.netease.yanxuan.minifc.admin.bo.AjaxResult;
 import com.netease.yanxuan.minifc.admin.po.FunctionInfo;
 import com.netease.yanxuan.minifc.admin.po.TriggerInfo;
 import com.netease.yanxuan.minifc.admin.service.FcOpsService;
+import org.nutz.dao.Cnd;
+import org.nutz.http.Header;
+import org.nutz.http.Http;
+import org.nutz.http.Response;
+import org.nutz.ioc.impl.PropertiesProxy;
+import org.nutz.ioc.loader.annotation.Inject;
+import org.nutz.ioc.loader.annotation.IocBean;
+import org.nutz.lang.Files;
+import org.nutz.lang.Lang;
+import org.nutz.lang.Strings;
+import org.nutz.lang.util.Regex;
+import org.nutz.mvc.annotation.AdaptBy;
+import org.nutz.mvc.annotation.At;
+import org.nutz.mvc.annotation.Ok;
+import org.nutz.mvc.annotation.Param;
+import org.nutz.mvc.upload.UploadAdaptor;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * 函数管理模块
@@ -35,6 +43,9 @@ public class FunctionInfoModule extends AbstractModule {
 
     @Inject
     private FcOpsService fcOpsService;
+
+    @Inject
+    private PropertiesProxy appConf;
 
     @At("/list")
     @Ok("json")
@@ -104,8 +115,10 @@ public class FunctionInfoModule extends AbstractModule {
         functionInfoToUpdate.setDescription(functionInfo.getDescription());
         functionInfoToUpdate.setFunctionEntrance(functionInfo.getFunctionEntrance());
         functionInfoToUpdate.setSourceCode(functionInfo.getSourceCode());
+        functionInfoToUpdate.setUploadFilePath(functionInfo.getUploadFilePath());
         functionInfoToUpdate.setUpdateTime(System.currentTimeMillis());
-        boolean isSourceUpdated = !Strings.equals(functionInfo.getSourceCode(), functionInfoInDB.getSourceCode());
+        boolean isSourceUpdated = (!Strings.equals(functionInfo.getSourceCode(), functionInfoInDB.getSourceCode()))
+            || (!Strings.equals(functionInfo.getUploadFilePath(), functionInfoInDB.getUploadFilePath()));
         if (!isSourceUpdated) {
             dao.update(functionInfoToUpdate);
             return initSuccessResult("更新函数成功!");
@@ -195,6 +208,40 @@ public class FunctionInfoModule extends AbstractModule {
         }
     }
 
+    @At("/proxy")
+    @Ok("json")
+    public AjaxResult proxy(String requestUri, String requestData, String method, String contentType) {
+        Header header = Header.create();
+        if (Strings.equals(contentType, "json")) {
+            header = header.asJsonContentType();
+        } else if (Strings.equals(contentType, "form")) {
+            header = header.asFormContentType();
+        }
+        try {
+            Response response = Http.post3(requestUri, requestData, header, 30000);
+            if (response.isOK()) {
+                return initSuccessResult(response.getContent());
+            } else {
+                return initFailureResult("函数调用异常," + response.getDetail());
+            }
+        } catch (Exception e) {
+            return initFailureResult("函数调用异常," + e.getMessage());
+        }
+    }
+
+    @At("/upload")
+    @Ok("json")
+    @AdaptBy(type = UploadAdaptor.class, args = { "/tmp" })
+    public AjaxResult upload(@Param("sourceFile") File sourceFile) {
+        String uploadDir = appConf.get("upload-dir");
+        String randomId = UUID.randomUUID().toString();
+        String suffix = Files.getSuffix(sourceFile);
+        String destDir = uploadDir + randomId + suffix;
+        File destFile = new File(destDir);
+        Files.copy(sourceFile, destFile);
+        return initSuccessResult(destDir);
+    }
+
     private void validateFunctionInfo(FunctionInfo functionInfo) throws Exception {
         String functionName = functionInfo.getFunctionName();
         boolean isMatch = Regex.match("^[a-z|A-Z][a-z|A-Z|0-9|\\-]+$", functionName);
@@ -205,6 +252,14 @@ public class FunctionInfoModule extends AbstractModule {
         isMatch = Regex.match("^[a-z|A-Z][\\w]+\\.[a-z|A-Z][\\w]+$", functionEntrance);
         if (!isMatch) {
             throw new Exception("函数入口格式为: 文件名.函数名\n文件名和函数名都需要以英文字母开头,并且只包含英文字母、数字和下划线");
+        }
+        String sourceCode = functionInfo.getSourceCode();
+        String uploadFilePath = functionInfo.getUploadFilePath();
+        if (Strings.isEmpty(sourceCode) && Strings.isEmpty(uploadFilePath)) {
+            throw new Exception("源代码和上传文件路径不能同时为空");
+        }
+        if (!Strings.isEmpty(sourceCode) && !Strings.isEmpty(uploadFilePath)) {
+            throw new Exception("源代码和上传文件路径不能同时填写");
         }
     }
 }

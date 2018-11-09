@@ -58,6 +58,11 @@ public class FunctionInfo {
     private String sourceCode;
 
     /**
+     * 上传的文件路径
+     */
+    private String uploadFilePath;
+
+    /**
      * 创建时间
      */
     private Long createTime;
@@ -129,6 +134,14 @@ public class FunctionInfo {
 
     public void setSourceCode(String sourceCode) {
         this.sourceCode = sourceCode;
+    }
+
+    public String getUploadFilePath() {
+        return uploadFilePath;
+    }
+
+    public void setUploadFilePath(String uploadFilePath) {
+        this.uploadFilePath = uploadFilePath;
     }
 
     public Long getCreateTime() {

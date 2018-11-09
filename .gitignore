@@ -1,1 +1,12 @@
+/target
+*.class
+target
+.classpath
+.project
+.settings
+build
+.DS_Store
+*.iml
 .idea
+.idea/
+mini-fc-admin/src/test/resources/
