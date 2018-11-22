@@ -3,8 +3,8 @@
  */
 package com.g4seek.minifc.example.idincr.handler;
 
-import com.google.gson.JsonObject;
 import com.g4seek.minifc.example.idincr.utils.JedisUtil;
+import com.google.gson.JsonObject;
 
 /**
  * @author hzlvzimin
