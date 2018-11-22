@@ -1,16 +1,14 @@
 /**
  * @(#)StoreHouse.java, 2018年08月16日.
- * Copyright 2018 Netease, Inc. All rights reserved.
- * NETEASE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package com.netease.yanxuan.teddy.po;
+package com.g4seek.teddy.po;
 
 import org.nutz.dao.entity.annotation.Id;
 import org.nutz.dao.entity.annotation.Table;
 
 /**
  * 仓库对象
- * 
+ *
  * @author hzlvzimin
  */
 @Table("STOREHOUSE")

@@ -1,9 +1,7 @@
 /**
  * @(#)JedisUtil.java, 2018年09月11日.
- * Copyright 2018 Netease, Inc. All rights reserved.
- * NETEASE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package com.netease.yanxuan.minifc.example.idincr.utils;
+package com.g4seek.minifc.example.idincr.utils;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;

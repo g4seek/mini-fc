@@ -3,7 +3,7 @@
 
 ### Quick Start
 1. 配置一台CentOS 7操作系统的服务器。并安装git,jdk8,python2,mysql,tomcat
-2. 安装docker和kubernetes(可参考http://yx.mail.netease.com/wiki/#/doc/295170)
+2. 安装docker和kubernetes
 3. 在MySQL中创建数据库,并执行 mini-fc-admin工程的 `ddl.sql`
 4. 修改配置文件 `mini-fc-admin`工程的`app.properties`和`db.properties`,`mini-fc-ops`工程的`configs.py`,并在服务器创建相应的目录
 5. 修改重启脚本 `mini-fc-admin`和`mini-fc-ops`工程的`build_restart.sh`

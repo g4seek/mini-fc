@@ -1,17 +1,14 @@
 /**
  * @(#)StoreHouseService.java, 2018年08月16日.
- * Copyright 2018 Netease, Inc. All rights reserved.
- * NETEASE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package com.netease.yanxuan.teddy.service;
+package com.g4seek.teddy.service;
 
-import java.util.List;
-
+import com.g4seek.teddy.po.StoreHouse;
+import com.g4seek.teddy.util.DBUtil;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 
-import com.netease.yanxuan.teddy.po.StoreHouse;
-import com.netease.yanxuan.teddy.util.DBUtil;
+import java.util.List;
 
 /**
  * @author hzlvzimin

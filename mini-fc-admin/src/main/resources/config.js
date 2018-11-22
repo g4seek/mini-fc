@@ -31,14 +31,14 @@ var ioc = {
         args: [{refer: "dataSource"}]
     },
     logInterceptor: {
-        type: 'com.netease.yanxuan.minifc.admin.aop.LogInterceptor'
+        type: 'com.g4seek.minifc.admin.aop.LogInterceptor'
     },
 
     $aop: {
         type: 'org.nutz.ioc.aop.config.impl.JsonAopConfigration',
         fields: {
             itemList: [
-                ['com\.netease\.yanxuan\.minifc\.admin\.module\..+', '.+', 'ioc:logInterceptor', 'false']
+                ['com\.g4seek\.minifc\.admin\.module\..+', '.+', 'ioc:logInterceptor', 'false']
             ]
         }
     }

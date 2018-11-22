@@ -1,6 +1,6 @@
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.netease.yanxuan.teddy.handler.IndexHandler;
+import com.g4seek.teddy.handler.IndexHandler;
 
 public class Index {
 

@@ -1,6 +1,6 @@
-import java.net.InetSocketAddress;
-
 import com.sun.net.httpserver.HttpServer;
+
+import java.net.InetSocketAddress;
 
 public class Server {
 

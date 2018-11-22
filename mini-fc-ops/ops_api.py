@@ -1,10 +1,9 @@
 # coding=utf-8
+import requests
 import traceback
 from BaseHTTPServer import BaseHTTPRequestHandler
 from BaseHTTPServer import HTTPServer
 from SocketServer import ThreadingMixIn
-
-import requests
 
 import admin_proxy
 import configs

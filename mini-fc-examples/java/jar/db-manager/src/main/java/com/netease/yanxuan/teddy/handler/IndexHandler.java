@@ -1,15 +1,13 @@
 /**
  * @(#)IndexHandler.java, 2018年08月16日.
- * Copyright 2018 Netease, Inc. All rights reserved.
- * NETEASE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package com.netease.yanxuan.teddy.handler;
+package com.g4seek.teddy.handler;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.netease.yanxuan.teddy.enums.OperateType;
-import com.netease.yanxuan.teddy.po.StoreHouse;
-import com.netease.yanxuan.teddy.service.StoreHouseService;
+import com.g4seek.teddy.enums.OperateType;
+import com.g4seek.teddy.po.StoreHouse;
+import com.g4seek.teddy.service.StoreHouseService;
 
 /**
  * @author hzlvzimin

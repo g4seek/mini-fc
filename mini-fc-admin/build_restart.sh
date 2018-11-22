@@ -11,7 +11,7 @@ if [ $# -gt 0 ]; then
 fi
 
 
-PROJECT_REPO="git@git.mail.netease.com:hzlvzimin/${PROJECT}.git"
+PROJECT_REPO="git@github.com:g4seek/mini-fc.git"
 echo ${PROJECT_REPO}
 
 cd ${SOURCE_DIR}

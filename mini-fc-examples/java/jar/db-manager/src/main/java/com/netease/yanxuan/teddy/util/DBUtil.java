@@ -1,9 +1,7 @@
 /**
  * @(#)DBUtil.java, 2018年08月16日.
- * Copyright 2018 Netease, Inc. All rights reserved.
- * NETEASE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
-package com.netease.yanxuan.teddy.util;
+package com.g4seek.teddy.util;
 
 import org.nutz.dao.Dao;
 import org.nutz.dao.impl.NutDao;
@@ -13,7 +11,7 @@ import javax.sql.DataSource;
 
 /**
  * 数据库工具类
- * 
+ *
  * @author hzlvzimin
  */
 public class DBUtil {
@@ -33,7 +31,7 @@ public class DBUtil {
             e.printStackTrace();
         }
         dataSource.setUrl(
-            "jdbc:mysql://10.216.41.160:3306/minifc_test?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true");
+                "jdbc:mysql://10.216.41.160:3306/minifc_test?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true");
         dataSource.setUsername("root");
         dataSource.setPassword("root");
         return dataSource;

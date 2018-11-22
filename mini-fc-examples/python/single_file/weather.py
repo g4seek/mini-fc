@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
-import urllib
-
 import requests
+import urllib
 
 
 def handler(environ, start_response):
