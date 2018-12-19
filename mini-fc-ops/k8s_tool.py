@@ -76,9 +76,8 @@ def get_k8s_overview(type):
         for i in range(1, len(lines)):
             result = ' '.join(lines[i].split()).split(' ')
             result_list.append(
-                {"name": result[0], "desired": result[1], "current": result[2], "upToDate": result[3],
-                 "available": result[4], "age": result[5], "containers": result[6], "images": result[7],
-                 "selector": result[8]})
+                {"name": result[0], "ready": result[1], "upToDate": result[2], "available": result[3],
+                 "age": result[4], "containers": result[5], "images": result[6], "selector": result[7]})
     return result_list
 
 

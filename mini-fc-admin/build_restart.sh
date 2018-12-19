@@ -16,7 +16,7 @@ echo ${PROJECT_REPO}
 
 cd ${SOURCE_DIR}
 
-if [ -d ${PROJECT}/.git ]; then
+if [[ -d ${PROJECT}/.git ]]; then
 cd ${PROJECT}
 git pull && git checkout ${BRANCH}
 else
@@ -31,11 +31,11 @@ mvn clean package
 BUILD_TARGET_PATH=${SOURCE_DIR}/${PROJECT}/${WEBAPP_NAME}/target/${WEBAPP_NAME}
 DEPLOY_PATH=/home/webapps/${WEBAPP_NAME}/
 
-if [ ! -d /home/webapps/${WEBAPP_NAME} ]; then
+if [[ ! -d /home/webapps/${WEBAPP_NAME} ]]; then
 mkdir /home/webapps/${WEBAPP_NAME}
 fi
 
-if [ -d ${DEPLOY_PATH} ]; then
+if [[ -d ${DEPLOY_PATH} ]]; then
 rm -rf ${DEPLOY_PATH}
 fi
 

@@ -10,9 +10,7 @@ public class K8sDeploymentInfo {
 
     private String name;
 
-    private String desired;
-
-    private String current;
+    private String ready;
 
     private String upToDate;
 
@@ -34,20 +32,12 @@ public class K8sDeploymentInfo {
         this.name = name;
     }
 
-    public String getDesired() {
-        return desired;
+    public String getReady() {
+        return ready;
     }
 
-    public void setDesired(String desired) {
-        this.desired = desired;
-    }
-
-    public String getCurrent() {
-        return current;
-    }
-
-    public void setCurrent(String current) {
-        this.current = current;
+    public void setReady(String ready) {
+        this.ready = ready;
     }
 
     public String getUpToDate() {
