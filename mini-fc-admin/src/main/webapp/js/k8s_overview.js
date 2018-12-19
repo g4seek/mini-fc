@@ -22,12 +22,11 @@ $.ajax({
         var deploymentList = data.deploymentList;
         for (let i = 0; i < deploymentList.length; i++) {
             let deploymentInfo = deploymentList[i];
-            var desired = deploymentInfo.desired;
+            var upToDate = deploymentInfo.upToDate;
             var name = deploymentInfo.name;
             let html = "<tr>" +
                 "<td>" + name + "</td>" +
-                "<td>" + desired + "</td>" +
-                "<td>" + deploymentInfo.current + "</td>" +
+                "<td>" + deploymentInfo.ready + "</td>" +
                 "<td>" + deploymentInfo.upToDate + "</td>" +
                 "<td>" + deploymentInfo.available + "</td>" +
                 "<td>" + deploymentInfo.age + "</td>" +
@@ -35,8 +34,8 @@ $.ajax({
                 "<td>" + deploymentInfo.images + "</td>" +
                 "<td>" + deploymentInfo.selector + "</td>" +
                 "<td>" +
-                "<button class='btn btn-primary' onclick='scaleUp(" + desired + ",\"" + name + "\");'>扩容</button>" +
-                "<button class='btn btn-danger' onclick='scaleDown(" + desired + ",\"" + name + "\");'>缩容</button>" +
+                "<button class='btn btn-primary' onclick='scaleUp(" + upToDate + ",\"" + name + "\");'>扩容</button>" +
+                "<button class='btn btn-danger' onclick='scaleDown(" + upToDate + ",\"" + name + "\");'>缩容</button>" +
                 "</td>" +
                 "</tr>";
             $('#deploymentsTable tbody').append(html);
@@ -67,21 +66,21 @@ $('#returnBtn').click(function () {
     $("#consolePanel", window.parent.document).attr("src", "/html/service_list.html");
 });
 
-function scaleUp(desired, deploymentName) {
-    if (desired === 4) {
+function scaleUp(upToDate, deploymentName) {
+    if (upToDate === 4) {
         alert("最多只能扩容到4个实例");
         return;
     }
-    targetNum = desired + 1;
+    targetNum = upToDate + 1;
     k8sScale(targetNum, deploymentName);
 }
 
-function scaleDown(desired, deploymentName) {
-    if (desired === 1) {
+function scaleDown(upToDate, deploymentName) {
+    if (upToDate === 1) {
         alert("最多只能缩容到1个实例");
         return;
     }
-    targetNum = desired - 1;
+    targetNum = upToDate - 1;
     k8sScale(targetNum, deploymentName);
 }
 
