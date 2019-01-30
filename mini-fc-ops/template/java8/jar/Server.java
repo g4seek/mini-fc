@@ -1,6 +1,4 @@
-public class Server_$ {
-    RANDOM
-} {
+public class Server_$RANDOM {
 
 public static void main(String[]args)throws Exception{
         int port=8000;
