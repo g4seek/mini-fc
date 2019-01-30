@@ -1,10 +1,10 @@
 /**
  * @(#)StoreHouseService.java, 2018年08月16日.
  */
-package com.g4seek.teddy.service;
+package com.g4seek.minifc.example.service;
 
-import com.g4seek.teddy.po.StoreHouse;
-import com.g4seek.teddy.util.DBUtil;
+import com.g4seek.minifc.example.po.StoreHouse;
+import com.g4seek.minifc.example.util.DBUtil;
 import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 

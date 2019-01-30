@@ -2,7 +2,7 @@
 0. 基本信息
 ```
 kubeadm版本:1.13.1
-master ip : 10.216.41.160 host : kube-node1
+master ip : 10.216.40.206 host : kube-node1
 node ip : 10.216.40.96 host : kube-node2
 ```
 1. 安装docker
@@ -79,11 +79,11 @@ systemctl start kubelet
 9. 执行kubeadm命令生成配置文件,启动kube节点
 ```
 kubeadm reset
-kubeadm init --apiserver-advertise-address 10.216.41.160
+kubeadm init --apiserver-advertise-address 10.216.40.206
 ```
 记录执行结果中的kube join命令
 ```
-kubeadm join 10.216.41.160:6443 --token udnwo5.08nzvtjx59b3b3xs --discovery-token-ca-cert-hash sha256:01fcdc7ca38ac85ebe91655d29f10805fae61a2c27718c01a78ff688f19185a5
+kubeadm join 10.216.40.206:6443 --token udnwo5.08nzvtjx59b3b3xs --discovery-token-ca-cert-hash sha256:01fcdc7ca38ac85ebe91655d29f10805fae61a2c27718c01a78ff688f19185a5
 ```
 
 10. 修改kubelet配置
@@ -107,7 +107,7 @@ apiVersion: v1
 clusters:
 - cluster:
     certificate-authority: /etc/kubernetes/pki/ca.crt
-    server: https://10.216.41.160:6443
+    server: https://10.216.40.206:6443
   name: my-cluster
 contexts:
 - context:
@@ -135,7 +135,7 @@ kubectl taint nodes --all node-role.kubernetes.io/master-
 2. 重置kubeadm,并加入集群
 ```
 kubeadm reset
-kubeadm join 10.216.41.160:6443 --token udnwo5.08nzvtjx59b3b3xs --discovery-token-ca-cert-hash sha256:01fcdc7ca38ac85ebe91655d29f10805fae61a2c27718c01a78ff688f19185a5
+kubeadm join 10.216.40.206:6443 --token udnwo5.08nzvtjx59b3b3xs --discovery-token-ca-cert-hash sha256:01fcdc7ca38ac85ebe91655d29f10805fae61a2c27718c01a78ff688f19185a5
 ```
 
 3. 

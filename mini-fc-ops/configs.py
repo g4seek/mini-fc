@@ -1,6 +1,6 @@
 # coding=utf-8
 # minifc部署的服务器
-mini_fc_host = "10.216.41.160"
+mini_fc_host = "10.216.40.206"
 # minifc-ops部署的端口
 mini_fc_ops_port = "13000"
 # minifc-admin部署的端口

@@ -1,7 +1,7 @@
 /**
  * @(#)DBUtil.java, 2018年08月16日.
  */
-package com.g4seek.teddy.util;
+package com.g4seek.minifc.example.util;
 
 import org.nutz.dao.Dao;
 import org.nutz.dao.impl.NutDao;
@@ -31,7 +31,7 @@ public class DBUtil {
             e.printStackTrace();
         }
         dataSource.setUrl(
-                "jdbc:mysql://10.216.41.160:3306/minifc_test?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true");
+                "jdbc:mysql://10.216.40.206:3306/minifc_test?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true");
         dataSource.setUsername("root");
         dataSource.setPassword("root");
         return dataSource;

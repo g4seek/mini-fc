@@ -1,7 +1,7 @@
 /**
  * @(#)StoreHouse.java, 2018年08月16日.
  */
-package com.g4seek.teddy.po;
+package com.g4seek.minifc.example.po;
 
 import org.nutz.dao.entity.annotation.Id;
 import org.nutz.dao.entity.annotation.Table;

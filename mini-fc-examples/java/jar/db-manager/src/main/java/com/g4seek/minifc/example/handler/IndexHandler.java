@@ -1,11 +1,11 @@
 /**
  * @(#)IndexHandler.java, 2018年08月16日.
  */
-package com.g4seek.teddy.handler;
+package com.g4seek.minifc.example.handler;
 
-import com.g4seek.teddy.enums.OperateType;
-import com.g4seek.teddy.po.StoreHouse;
-import com.g4seek.teddy.service.StoreHouseService;
+import com.g4seek.minifc.example.enums.OperateType;
+import com.g4seek.minifc.example.po.StoreHouse;
+import com.g4seek.minifc.example.service.StoreHouseService;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 

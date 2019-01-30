@@ -21,7 +21,7 @@ public class JedisUtil {
     private JedisUtil() {
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
         jedisPoolConfig.setMaxTotal(10);
-        jedisPool = new JedisPool(jedisPoolConfig, "10.216.41.160", 6379);
+        jedisPool = new JedisPool(jedisPoolConfig, "10.216.40.206", 6379);
     }
 
     public static JedisUtil getInstance() {

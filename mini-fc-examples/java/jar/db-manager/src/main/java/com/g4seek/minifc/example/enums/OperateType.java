@@ -1,7 +1,7 @@
 /**
  * @(#)OperateType.java, 2018年08月16日.
  */
-package com.g4seek.teddy.enums;
+package com.g4seek.minifc.example.enums;
 
 import org.nutz.lang.Strings;
 
